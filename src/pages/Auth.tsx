@@ -30,19 +30,23 @@ const Auth = () => {
   });
   
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [waitingForRole, setWaitingForRole] = useState(false);
 
   useEffect(() => {
     if (user && userRole) {
       // Redirect based on role
       if (userRole === 'admin') {
-        navigate('/admin');
+        navigate('/admin', { replace: true });
       } else if (userRole === 'employer') {
-        navigate('/employer/dashboard');
+        navigate('/employer/dashboard', { replace: true });
       } else if (userRole === 'worker') {
-        navigate('/worker/dashboard');
+        navigate('/worker/dashboard', { replace: true });
       }
+    } else if (user && !userRole && !authLoading) {
+      // User logged in but role not yet fetched - show loading
+      setWaitingForRole(true);
     }
-  }, [user, userRole, navigate]);
+  }, [user, userRole, navigate, authLoading]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -117,10 +121,15 @@ const Auth = () => {
     }
   };
 
-  if (authLoading) {
+  if (authLoading || waitingForRole) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">
+            {waitingForRole ? "Preparing your dashboard..." : "Loading..."}
+          </p>
+        </div>
       </div>
     );
   }
