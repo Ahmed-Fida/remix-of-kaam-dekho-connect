@@ -16,6 +16,10 @@ import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
+import EmployerDashboard from "./pages/EmployerDashboard";
+import WorkerDashboard from "./pages/WorkerDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import WorkerProfile from "./pages/WorkerProfile";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +33,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/workers" element={<Workers />} />
+            <Route path="/workers/:id" element={<WorkerProfile />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/login" element={<Auth />} />
             <Route path="/signup" element={<Auth />} />
@@ -40,6 +45,10 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<Terms />} />
+            <Route path="/employer/dashboard" element={<EmployerDashboard />} />
+            <Route path="/worker/dashboard" element={<WorkerDashboard />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/login" element={<Auth />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
