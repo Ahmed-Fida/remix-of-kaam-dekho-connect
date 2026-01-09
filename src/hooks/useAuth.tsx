@@ -30,10 +30,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .from('user_roles')
       .select('role')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
     
     if (data && !error) {
       setUserRole(data.role as UserRole);
+    } else if (!data && !error) {
+      // No role found - could be a legacy user
+      setUserRole(null);
     }
   };
 
