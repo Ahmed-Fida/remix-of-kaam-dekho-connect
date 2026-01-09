@@ -42,9 +42,19 @@ const Auth = () => {
       } else if (userRole === 'worker') {
         navigate('/worker/dashboard', { replace: true });
       }
+      setWaitingForRole(false);
     } else if (user && !userRole && !authLoading) {
-      // User logged in but role not yet fetched - show loading
+      // User logged in but role not yet fetched - wait briefly then timeout
       setWaitingForRole(true);
+      
+      // Timeout after 3 seconds - role fetch should be instant
+      const timeout = setTimeout(() => {
+        // If still no role, redirect to home (user can select role or contact support)
+        setWaitingForRole(false);
+        navigate('/', { replace: true });
+      }, 3000);
+      
+      return () => clearTimeout(timeout);
     }
   }, [user, userRole, navigate, authLoading]);
 
