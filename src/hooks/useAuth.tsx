@@ -85,7 +85,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        // Handle specific error codes
+        if (error.message.includes('already registered') || error.message.includes('User already registered')) {
+          throw new Error('This email is already registered. Please sign in instead.');
+        }
+        throw error;
+      }
+
+      // Check if user was actually created (not just returned existing)
+      if (data.user && !data.user.identities?.length) {
+        throw new Error('This email is already registered. Please sign in instead.');
+      }
 
       // Create role entry
       if (data.user) {
@@ -93,7 +104,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           .from('user_roles')
           .insert({ user_id: data.user.id, role });
 
-        if (roleError) throw roleError;
+        if (roleError && !roleError.message.includes('duplicate')) {
+          console.error('Role creation error:', roleError);
+        }
 
         // Create role-specific profile
         if (role === 'worker') {
@@ -112,7 +125,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error: any) {
       toast({
         title: "Sign up failed",
-        description: error.message,
+        description: error.message || "An error occurred during sign up.",
         variant: "destructive",
       });
       return { error };
